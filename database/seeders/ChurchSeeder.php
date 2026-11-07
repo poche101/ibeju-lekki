@@ -15,7 +15,7 @@ class ChurchSeeder extends Seeder
         foreach (config('churches') as $slug => $c) {
             $church = Church::updateOrCreate(['slug' => $slug], ['name' => $c['name']]);
 
-            // Optional overrides in .env, e.g. ADMIN_EMAIL_AJAH_MEGA / ADMIN_PASSWORD_AJAH_MEGA
+            // Optional overrides in .env, e.g. ADMIN_EMAIL_IBEJU_LEKKI_MEGA / ADMIN_PASSWORD_IBEJU_LEKKI_MEGA
             $key = strtoupper(str_replace('-', '_', $slug));
             $email = env("ADMIN_EMAIL_{$key}", "admin@{$slug}.org");
             $envPassword = env("ADMIN_PASSWORD_{$key}");

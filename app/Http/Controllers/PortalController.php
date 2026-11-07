@@ -32,29 +32,23 @@ class PortalController extends Controller
         return back()->with('ok', 'Thank you, '.explode(' ', $m->full_name)[0].'! Your attendance is recorded.');
     }
 
+    // The public sign-up is for Ibeju Lekki Mega Church only.
+    private function megaChurch(): Church
+    {
+        return Church::where('slug', 'ibeju-lekki-mega')->firstOrFail();
+    }
+
     public function form()
     {
-        $cfg = (new Church)->forceFill(['slug' => 'ajah-mega'])->config(); // includes the extra options (Not in a Cell / Member)
-        $sections = collect($cfg['sections'])->map(fn ($s) => [
-            'label' => $s['label'],
-            'groups' => collect($s['groups'])->mapWithKeys(fn ($g) => [$g => $cfg['groups'][$g]])->all(),
-        ])->all();
+        $church = $this->megaChurch();
 
-        return view('portal.register', [
-            'sections' => $sections,
-            'group_label' => $cfg['group_label'],
-            'cell_label' => $cfg['cell_label'],
-        ]);
+        return view('portal.register', ['church' => $church, 'cfg' => $church->config()]);
     }
 
     public function register(Request $r)
     {
-        // Ajah and Ajah-Mega are one church record; the toggle only filters the groups.
-        $r->validate(['section' => 'required|in:ajah,mega']);
-        $church = Church::where('slug', 'ajah-mega')->firstOrFail();
-        $cfg = $church->config();
-        $groups = collect($cfg['sections'][$r->section]['groups'])
-            ->mapWithKeys(fn ($g) => [$g => $cfg['groups'][$g]])->all();
+        $church = $this->megaChurch();
+        $groups = $church->config()['groups'];
 
         $data = $r->validate([
             'full_name' => 'required|string|max:120',

@@ -11,9 +11,6 @@ Route::get('/admin/login',[PortalController::class,'loginForm'])->name('portal.l
 Route::post('/admin/login',[PortalController::class,'login'])->middleware('throttle:6,1');
 Route::get('/admin',[PortalController::class,'adminHome'])->name('portal.admin');
 
-// Old Ajah links keep working
-Route::get('/ajah/{path?}', fn ($path = null) => redirect('/ajah-mega'.($path ? '/'.$path : '')))->where('path', '.*');
-
 // ===== Per-church pages (admin area is reached after signing in) =====
 Route::prefix('{church:slug}')->group(function(){
  Route::get('/',[CheckinController::class,'show'])->name('checkin');
